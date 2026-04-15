@@ -72,24 +72,64 @@ print(fbe.decrypt(sk_real))     # 99
 fbe.delete(1)
 ```
 
-## Running the Demo
+## Running
 
 ```bash
 python false_bottom_encryption.py
 ```
 
-This runs encrypt/decrypt verification on 10 messages, tests update and delete operations, and scales up to 1000 messages to confirm correctness:
+You'll be asked to choose a mode:
 
 ```
-[ENCRYPT] Adding 10 messages...
-[DECRYPT] Verifying all 10 messages...
+False-Bottom Encryption
+  1. Interactive mode (user prompts)
+  2. Automated test (no input needed)
+```
+
+### Interactive Mode
+
+Walks you through the full scheme step by step with prompts:
+
+1. **System initialization** — choose the prime $p$ and key base size $k$
+2. **Encryption** — specify how many messages to encrypt and enter each value
+3. **Decryption** — automatically verifies all messages decrypt correctly
+4. **Update** — specify how many messages to update, pick indices and new values
+5. **Delete** — specify how many messages to delete, pick indices
+6. **Final state** — shows the ciphertext, all keys, and verification results
+
+Example session:
+
+```
+Enter the prime p (e.g. 9973): 9973
+Enter the key base size k (e.g. 5): 5
+How many messages do you want to encrypt? 5
+  m_0 = 100
+  m_1 = 200
+  m_2 = 300
+  m_3 = 42
+  m_4 = 7777
+  ...
   All decryptions correct!
-[UPDATE] Changing m_2 from 300 to 999...
+How many messages do you want to update? (0 to skip): 1
+  Which message index to update? [0-4]: 2
+  New value for m_2 [0-9972]: 999
+  Updated m_2: 300 -> 999
   All other messages unaffected!
-[SCALE TEST] Adding 100 more messages...
-  100/100 correct
-[STRESS TEST] 1000 messages with large prime...
-  1000/1000 correct
+How many messages do you want to delete? (0 to skip): 1
+  Which message index to delete? 4
+  Deleted m_4 (was 7777).
+  Decryption with old key now returns: 8620 (garbage)
+```
+
+### Automated Test
+
+Runs encrypt/decrypt on 10 messages, tests update and delete integrity, and scales up to 1000 messages:
+
+```
+  [Test 1] Encrypt/decrypt 10 messages: 10/10 correct
+  [Test 2] Update m_2 -> 999: OK, others unaffected
+  [Test 3] Delete m_4: OK (decrypts to garbage)
+  [Test 4] Scale test (1000 messages, p=104729): 1000/1000 correct
 ```
 
 ## Improvements Over the Original Notebook
