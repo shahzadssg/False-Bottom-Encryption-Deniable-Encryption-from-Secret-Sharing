@@ -132,19 +132,6 @@ Runs encrypt/decrypt on 10 messages, tests update and delete integrity, and scal
   [Test 4] Scale test (1000 messages, p=104729): 1000/1000 correct
 ```
 
-## Improvements Over the Original Notebook
-
-The [original Jupyter notebook](https://doi.org/10.1109/ACCESS.2023.3288285) accompanying the paper hard-codes 3 messages with copy-pasted code blocks. This implementation generalizes it and fixes several bugs:
-
-| Issue | Original Notebook | This Implementation |
-|-------|------------------|---------------------|
-| **Number of messages** | Hard-coded for ~3 | Arbitrary (tested up to 1000) |
-| **Index tracking** | Uses `c.index(v)` which returns wrong index on duplicate values | Tracks indices directly during encryption |
-| **Ciphertext append** | `c.extend(y for y in ci if y not in c)` silently skips values that already exist | Always appends the new element |
-| **Modular inverse** | Brute-force $O(p)$ loop | `pow(a, -1, p)` in $O(\log p)$ |
-| **Editability (condition 2)** | Not enforced — updating one message can silently corrupt others | Maintains a forbidden set of unique indices per Lemma 1 |
-| **Interface** | Interactive `input()` prompts, global variables | Clean class with `encrypt()`, `decrypt()`, `update()`, `delete()` |
-
 ## API Reference
 
 ### `FalseBottomEncryption(p, k, seed=None)`
